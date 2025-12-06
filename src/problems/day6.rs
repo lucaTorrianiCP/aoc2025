@@ -18,8 +18,6 @@ pub fn part1() -> u64 {
         })
         .collect();
 
-    println!("matrix {:?}", matrix);
-
     let operations = matrix.pop().unwrap();
 
     for i in 0..operations.len() {
@@ -51,50 +49,10 @@ pub fn part2() -> u64 {
     let reader = BufReader::new(file);
     let mut somma: u64 = 0;
 
-    let mut matrix: Vec<Vec<String>> = reader
+    let matrix: Vec<Vec<String>> = reader
         .lines()
         .map(|x| x.unwrap().split(" ").map(|y| y.to_string()).collect())
-        // .map(|row: Vec<String>| {
-        //     let nums: Vec<&String> = row.iter().filter(|s| !s.is_empty()).collect();
-        //     let max_len = nums.iter().map(|s| s.len()).max().unwrap_or(0);
-        //     let mut result = Vec::new();
-        //     let mut i = 0;
-        //     let mut left_spaces = 0;
-        //     while i < row.len() {
-        //         if row[i].is_empty() {
-        //             left_spaces += 1;
-        //             i += 1;
-        //             continue;
-        //         }
-        //         let val = &row[i];
-        //         let mut needed = max_len - val.len();
-        //         let take_left = left_spaces.min(needed);
-        //         needed -= take_left;
-        //         let mut right_spaces = 0;
-        //         let mut k = i + 1;
-        //         while k < row.len() && row[k].is_empty() {
-        //             if needed == 0 {
-        //                 break;
-        //             }
-        //             right_spaces += 1;
-        //             needed -= 1;
-        //             k += 1;
-        //         }
-        //         let padded = format!(
-        //             "{}{}{}",
-        //             " ".repeat(take_left),
-        //             val,
-        //             " ".repeat(right_spaces)
-        //         );
-        //         result.push(padded);
-        //         left_spaces = 0;
-        //         i += 1;
-        //     }
-        //     result
-        // })
         .collect();
-
-    println!("sempre lui {:?}", matrix);
 
     let mut matrix = align_matrix(matrix);
 
@@ -115,8 +73,6 @@ pub fn part2() -> u64 {
         new_matrix.push(tmp_vec);
     }
 
-    println!("new {:?}", new_matrix);
-
     let mut new_matrix_nums: Vec<Vec<u64>> = vec![];
 
     for vec in new_matrix {
@@ -132,10 +88,7 @@ pub fn part2() -> u64 {
             .into_iter()
             .map(|chars| chars.into_iter().collect::<String>())
             .filter(|y| !y.is_empty())
-            .map(|x| {
-                println!("x {}", x);
-                x.trim().parse::<u64>().unwrap()
-            })
+            .map(|x| x.trim().parse::<u64>().unwrap())
             .collect();
 
         new_matrix_nums.push(nums_vec);
@@ -170,43 +123,29 @@ fn align_matrix(matrix: Vec<Vec<String>>) -> Vec<Vec<String>> {
         }
     }
 
-    let mut result = Vec::new();
-    for row in &matrix {
-        let mut new_row = Vec::new();
-        let mut i = 0;
-        let mut col_index = 0;
+    let mut result = vec![];
 
-        while i < row.len() {
-            if row[i].is_empty() {
-                i += 1;
-                continue;
+    for i in 0..matrix.len() {
+        let riga = matrix[i].clone();
+        let mut new_riga: Vec<String> = vec![];
+        let mut tmp_string = String::new();
+        let mut lens_index = 0;
+
+        for j in 0..riga.len() {
+            if riga[j] == "".to_string() {
+                tmp_string.push_str(" ");
+            } else {
+                tmp_string.push_str(riga[j].as_str());
             }
 
-            let val = &row[i];
-            let mut needed = max_lens[col_index].saturating_sub(val.len());
-
-            let mut left_spaces = 0;
-            let mut j = i;
-            while j > 0 && row[j - 1].is_empty() && needed > 0 {
-                left_spaces += 1;
-                needed -= 1;
-                j -= 1;
+            if tmp_string.len() == max_lens[lens_index] {
+                new_riga.push(tmp_string);
+                tmp_string = String::new();
+                lens_index += 1;
             }
-
-            let right_spaces = needed;
-
-            new_row.push(format!(
-                "{}{}{}",
-                " ".repeat(left_spaces),
-                val,
-                " ".repeat(right_spaces)
-            ));
-
-            i += 1;
-            col_index += 1;
         }
 
-        result.push(new_row);
+        result.push(new_riga);
     }
 
     result
