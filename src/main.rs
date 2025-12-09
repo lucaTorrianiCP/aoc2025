@@ -1,7 +1,7 @@
 pub mod problems;
 
-use crate::problems::day8;
+use crate::problems::day9;
 
 fn main() {
-    println!("risultato {}", day8::part2());
+    println!("risultato {}", day9::part2());
 }
